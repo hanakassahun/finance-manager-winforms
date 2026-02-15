@@ -14,5 +14,6 @@ namespace FinanceManager.WinForms.Services
             return _repo.Add(c);
         }
         public void Delete(long id) => _repo.Delete(id);
+        public void Edit(long id, string name) => _repo.Update(id, name);
     }
 }

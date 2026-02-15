@@ -38,7 +38,8 @@ namespace FinanceManager.WinForms.Repositories
                   Id INTEGER PRIMARY KEY AUTOINCREMENT,
                   Category TEXT,
                   Month TEXT,
-                  Amount REAL
+                  Amount REAL,
+                  UNIQUE(Category, Month)
                 );";
             cmd.ExecuteNonQuery();
         }

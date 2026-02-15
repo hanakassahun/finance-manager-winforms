@@ -12,13 +12,23 @@ namespace FinanceManager.WinForms.Repositories
         {
             using var conn = new SqliteConnection(Database.ConnectionString);
             conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "INSERT INTO Budgets (Category, Month, Amount) VALUES ($cat,$month,$amt) ON CONFLICT(Category,Month) DO UPDATE SET Amount=$amt; SELECT last_insert_rowid();";
-            cmd.Parameters.AddWithValue("$cat", b.Category);
-            cmd.Parameters.AddWithValue("$month", b.Month);
-            cmd.Parameters.AddWithValue("$amt", b.Amount);
-            var id = (long)cmd.ExecuteScalar();
-            return id;
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "INSERT INTO Budgets (Category, Month, Amount) VALUES ($cat,$month,$amt) ON CONFLICT(Category,Month) DO UPDATE SET Amount=$amt;";
+                cmd.Parameters.AddWithValue("$cat", b.Category);
+                cmd.Parameters.AddWithValue("$month", b.Month);
+                cmd.Parameters.AddWithValue("$amt", b.Amount);
+                cmd.ExecuteNonQuery();
+            }
+
+            using (var cmd2 = conn.CreateCommand())
+            {
+                cmd2.CommandText = "SELECT Id FROM Budgets WHERE Category=$cat AND Month=$month LIMIT 1;";
+                cmd2.Parameters.AddWithValue("$cat", b.Category);
+                cmd2.Parameters.AddWithValue("$month", b.Month);
+                var res = cmd2.ExecuteScalar();
+                return res == null || res is DBNull ? 0L : (long)res;
+            }
         }
 
         public List<Budget> GetAll()

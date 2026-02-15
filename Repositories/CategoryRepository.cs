@@ -43,5 +43,16 @@ namespace FinanceManager.WinForms.Repositories
             cmd.Parameters.AddWithValue("$id", id);
             cmd.ExecuteNonQuery();
         }
+
+        public void Update(long id, string name)
+        {
+            using var conn = new SqliteConnection(Database.ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE OR IGNORE Categories SET Name=$name WHERE Id=$id";
+            cmd.Parameters.AddWithValue("$name", name);
+            cmd.Parameters.AddWithValue("$id", id);
+            cmd.ExecuteNonQuery();
+        }
     }
 }
